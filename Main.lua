@@ -57,7 +57,11 @@ Files:Init({
 	Services = Services
 })
 
---// Modules
+--// Load our fixed UI module directly
+local UiScript = readfile("c:/Users/asdas/Downloads/spy-main/spy-main/lib/Ui_fixed.lua")
+local Ui = loadstring(UiScript)()
+
+--// Modules (excluding Ui which we load separately)
 local Scripts = {
 	--// User configurations
 	Config = Files:GetModule("Sigma Spy/Config", "Config"),
@@ -69,7 +73,6 @@ local Scripts = {
 	Process = Files:GetModule("lib/Process"),
 	Hook = Files:GetModule("lib/Hook"),
 	Flags = Files:GetModule("lib/Flags"),
-	Ui = Files:GetModule("lib/Ui"),
 	Generation = Files:GetModule("lib/Generation"),
 	Communication = Files:GetModule("lib/Communication")
 }
@@ -81,14 +84,11 @@ local Players: Players = Services.Players
 local Modules = Files:LoadLibraries(Scripts)
 local Process = Modules.Process
 local Hook = Modules.Hook
-local Ui = Modules.Ui
 local Generation = Modules.Generation
 local Communication = Modules.Communication
 
---// Use custom font (optional)
-local FontContent = Files:GetAsset("ProggyClean.ttf", true)
-local FontJsonFile = Files:CreateFont("ProggyClean", FontContent)
-Ui:SetFontFile(FontJsonFile)
+--// Add Ui to modules
+Modules.Ui = Ui
 
 --// Load modules
 Files:LoadModules(Modules, {
@@ -96,7 +96,7 @@ Files:LoadModules(Modules, {
 	Services = Services
 })
 
---// ReGui Create window
+--// Create window
 local Window = Ui:CreateWindow()
 
 --// Check if Sigma spy is supported
@@ -124,14 +124,6 @@ Generation:SetSwapsCallback(function(self)
 	})
 end)
 
---// Beta alert modal
--- Ui:ShowModal({
--- 	"<b>Attention!</b>",
--- 	"Sigma Spy is in BETA, please expect issues\n",
--- 	"Report any issues to the Github page (depthso/Sigma-Spy)\n",
--- 	"Many thanks!"
--- })
-
 --// Create window content
 Ui:CreateWindowContent(Window)
 
@@ -141,3 +133,5 @@ Ui:BeginLogService()
 --// Load hooks
 local ActorCode = Files:MakeActorScript(Scripts, ChannelId)
 Hook:LoadHooks(ActorCode, ChannelId)
+
+print("Sigma Spy loaded successfully with asset error bypass!")
