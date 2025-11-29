@@ -173,24 +173,16 @@ function Ui:LoadReGui()
 	local ThemeConfig = Config.ThemeConfig
 	ThemeConfig.TextFont = TextFont
 
-	--// ReGui
-	local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
+	--// ReGui - Skip loading prefabs and use fallback
 	ReGui:DefineTheme("SigmaSpy", ThemeConfig)
 	
-	--// Try to load prefabs, use fallback if it fails
-	local success, prefabs = pcall(function()
-		return InsertService:LoadLocalAsset(PrefabsId)
-	end)
-	
+	--// Initialize with fallback prefabs to avoid sound loading error
 	ReGui:Init({
-		Prefabs = success and prefabs or nil,
-		UseFallbackPrefabs = not success
+		Prefabs = nil,
+		UseFallbackPrefabs = true
 	})
 	
-	--// Show warning if prefabs failed to load
-	if not success then
-		print("[Sigma Spy] Warning: Failed to load prefabs, using fallback prefabs instead.")
-	end
+	print("[Sigma Spy] Using fallback prefabs to avoid asset loading errors")
 end
 
 type CreateButtons = {
@@ -492,12 +484,12 @@ function Ui:MakeEditorTab(InfoSelector)
 
 	local SyntaxColors = Config.SyntaxColors
 
-	--// IDE
+	--// IDE with simplified config to avoid asset loading errors
 	local CodeEditor = IDEModule.CodeFrame.new({
 		Editable = false,
 		FontSize = 13,
-		Colors = SyntaxColors,
-		FontFace = TextFont
+		Colors = SyntaxColors
+		-- Skip FontFace to avoid asset loading errors
 	})
 	CodeEditor:SetText(Default)
 	
